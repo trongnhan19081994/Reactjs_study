@@ -7,13 +7,13 @@ class App extends Component {
     return (
      
      <nav className="navbar navbar-inverse">
-       <a className="navbar-brand" href="#">Title</a>
+       <a className="navbar-brand">Title</a>
        <ul className="nav navbar-nav">
          <li className="active">
-           <a href="#">Home</a>
+           <a>Home</a>
          </li>
          <li>
-           <a href="#">Link</a>
+           <a>Link</a>
          </li>
        </ul>
      </nav>
