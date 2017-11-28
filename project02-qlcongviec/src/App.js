@@ -23,29 +23,29 @@ class App extends Component {
        }
     }
 
-    onGenerateData(){
-        var tasks = [
-            {
-                id:this.generateID(),
-                name:'Học lập trình',
-                status:true
-            },
-            {
-                id: this.generateID(),
-                name:'Học lập trình 2',
-                status:true
-            },
-            {
-                id: this.generateID(),
-                name:'Học lập trình 3',
-                status:false
-            },
-        ];
-        this.setState({
-            tasks: tasks
-        });
-        localStorage.setItem('tasks', JSON.stringify(tasks)); // JSON.stringify(tasks): Chuyển từ kiểu Object sang kiểu String
-    }
+    // onGenerateData(){
+    //     var tasks = [
+    //         {
+    //             id:this.generateID(),
+    //             name:'Học lập trình',
+    //             status:true
+    //         },
+    //         {
+    //             id: this.generateID(),
+    //             name:'Học lập trình 2',
+    //             status:true
+    //         },
+    //         {
+    //             id: this.generateID(),
+    //             name:'Học lập trình 3',
+    //             status:false
+    //         },
+    //     ];
+    //     this.setState({
+    //         tasks: tasks
+    //     });
+    //     localStorage.setItem('tasks', JSON.stringify(tasks)); // JSON.stringify(tasks): Chuyển từ kiểu Object sang kiểu String
+    // }
 
     s4(){
         return Math.floor((1+Math.random()) * 0x10000).toString(16).substring(1);
@@ -68,10 +68,23 @@ class App extends Component {
         });
     }
 
+    onSubmitData(data){
+        var {tasks} = this.state;
+        data.id=this.generateID();
+        data.name= data.name;
+        data.status= data.status;
+        tasks.push(data);
+        this.setState({
+            tasks:tasks
+        })
+        localStorage.setItem('tasks', JSON.stringify(tasks));// JSON.stringify(tasks): Chuyển từ kiểu Object sang kiểu String
+   
+    }
+
   render() {
 
     var {tasks, isDisplayForm} = this.state; //tương đương: var tasks = this.state.tasks;
-    var elmTaskForm = isDisplayForm ? <TaskForm onCloseForm={this.onCloseForm} />: '';
+    var elmTaskForm = isDisplayForm ? <TaskForm onCloseForm={this.onCloseForm} onSubmit={this.onSubmitData.bind(this)} />: '';
 
     return (
       
@@ -90,9 +103,9 @@ class App extends Component {
                       <span className="fa fa-plus mr-5"></span>Thêm Công Việc
                   </button> &nbsp;&nbsp;
                     {/* Search - Sort */}
-                  <button onClick={this.onGenerateData.bind(this)} type="button" className="btn btn-danger">
+                  {/* <button onClick={this.onGenerateData.bind(this)} type="button" className="btn btn-danger">
                       Generate Data
-                  </button>
+                  </button> */}
                     {/* Search - Sort */}
                     <Control />
 
