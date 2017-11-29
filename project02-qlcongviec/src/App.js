@@ -10,7 +10,12 @@ class App extends Component {
         super(props);
         this.state = {
             tasks:[], // id, name, status
-            isDisplayForm:false
+            isDisplayForm:false, 
+            taskEditing:null,
+            filter:{
+                name:'',
+                status:-1
+            }
         }
     }
 
@@ -56,10 +61,18 @@ class App extends Component {
  
     }
 
-    onToggleForm = () =>{
-        this.setState({
-            isDisplayForm: !this.state.isDisplayForm
-        });
+    onToggleForm = () =>{ // Thêm task
+        if(this.state.isDisplayForm && this.state.taskEditing !==null){
+            this.setState({
+                isDisplayForm: true,
+                taskEditing: null
+            });
+        } else {
+            this.setState({
+                isDisplayForm: !this.state.isDisplayForm,
+                taskEditing: null
+            });
+        }
     }
 
     onCloseForm = () =>{
@@ -67,15 +80,28 @@ class App extends Component {
             isDisplayForm: false
         });
     }
+    onShowForm = () =>{
+        this.setState({
+            isDisplayForm: true
+        });
+    }
 
     onSubmitData(data){
         var {tasks} = this.state;
-        data.id=this.generateID();
-        // data.name= data.name;
-        // data.status= data.status;
-        tasks.push(data);
+        if(data.id===''){
+            data.id=this.generateID();
+            // data.name= data.name;
+            // data.status= data.status;
+            tasks.push(data);
+        } else {
+            //Editing
+            var index = this.findIndex(data.id);
+            tasks[index] = data;
+        }
+       
         this.setState({
-            tasks:tasks
+            tasks:tasks, 
+            taskEditing: null
         })
         localStorage.setItem('tasks', JSON.stringify(tasks));// JSON.stringify(tasks): Chuyển từ kiểu Object sang kiểu String
    
@@ -114,12 +140,53 @@ class App extends Component {
             });
             localStorage.setItem('tasks', JSON.stringify(tasks));
         }
+        this.onCloseForm();
+    }
+
+    onUpdate = (id)=>{
+        var {tasks} = this.state;
+        var index = this.findIndex(id);
+        var taskEditing = tasks[index];
+        this.setState({
+            taskEditing: taskEditing
+        })
+        this.onShowForm();
+    }
+
+    onFilter = (filterName, filterStatus) =>{
+        filterStatus = parseInt(filterStatus,10);
+        this.setState({
+            filter:{
+                name:filterName.toLowerCase(),
+                status:filterStatus
+            }
+        })
     }
 
   render() {
 
-    var {tasks, isDisplayForm} = this.state; //tương đương: var tasks = this.state.tasks;
-    var elmTaskForm = isDisplayForm ? <TaskForm onCloseForm={this.onCloseForm} onSubmit={this.onSubmitData.bind(this)} />: '';
+    var {tasks, isDisplayForm, taskEditing, filter} = this.state; //tương đương: var tasks = this.state.tasks;
+    if(filter){
+        if(filter.name){
+            tasks = tasks.filter((task)=>{
+                return task.name.toLowerCase().indexOf(filter.name) !== -1;
+            });
+        }
+   
+        tasks = tasks.filter( (task)=>{
+            if(filter.status === -1){
+                return task;
+            } else {
+                return task.status === (filter.status===1?true:false)
+            }
+        })
+    
+    }
+    var elmTaskForm = isDisplayForm ? <TaskForm 
+        onCloseForm={this.onCloseForm} 
+        onSubmit={this.onSubmitData.bind(this)} 
+        task={taskEditing}
+    />: '';
 
     return (
       
@@ -151,7 +218,9 @@ class App extends Component {
                             tasks={tasks} 
                             onUpdateStatus = {this.onUpdateStatus} 
                             onDeleteItems = {this.onDeleteItems}
-                        />
+                            onUpdate = {this.onUpdate}
+                            onFilter={this.onFilter}
+                       />
                       </div>
                   </div>
               </div>

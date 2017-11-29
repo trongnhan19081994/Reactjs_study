@@ -2,16 +2,43 @@ import React, { Component } from 'react';
 
 class TaskForm extends Component {
 
-    onCloseFormClick = () =>{
-        this.props.onCloseForm();
-    }
-
     constructor(props){
         super(props);
         this.state={
+            id:'',
             name:'',
             status:false
         }
+    }
+
+    componentWillMount(){ // Thực thi trước khi hiện thị taskForm
+        if(this.props.task){
+            this.setState({
+                id: this.props.task.id,
+                name: this.props.task.name,
+                status: this.props.task.status,
+            })
+        }
+    }
+
+    componentWillReceiveProps(nextProps){ // Hàm này thực hiện liên tục mỗi khi props thay đổi
+        if(nextProps && nextProps.task){
+            this.setState({
+                id: nextProps.task.id,
+                name: nextProps.task.name,
+                status: nextProps.task.status,
+            })
+        } else if(!nextProps.task){ // Sửa thành thêm
+            this.setState({
+                id:'',
+                name:'',
+                status:false
+            })
+        }
+    }
+
+    onCloseFormClick = () =>{
+        this.props.onCloseForm();
     }
 
     onChange(event){
@@ -43,11 +70,14 @@ class TaskForm extends Component {
     }
 
   render() {
+
+    var {id} = this.state;
+
     return (
       
         <div className="panel panel-warning">
             <div className="panel-heading">
-                <h3 className="panel-title">Thêm Công Việc
+                <h3 className="panel-title"> {id!=='' ? 'Cập nhật công việc': 'Thêm công việc' }
                     <span className="fa fa-window-close text-right" onClick={this.onCloseFormClick}></span>
                 </h3>
             </div>
