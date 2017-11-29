@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import TaskForm from './components/TaskForm';
-import Control from './components/Control';
+import Control from './components/TaskControl';
 import TaskList from './components/TaskList';
 
 class App extends Component {
@@ -15,7 +15,8 @@ class App extends Component {
             filter:{
                 name:'',
                 status:-1
-            }
+            },
+            keyword:''
         }
     }
 
@@ -163,9 +164,15 @@ class App extends Component {
         })
     }
 
+    onSearch = (keyword) =>{
+       this.setState({
+           keyword: keyword
+       })
+    }
+
   render() {
 
-    var {tasks, isDisplayForm, taskEditing, filter} = this.state; //tương đương: var tasks = this.state.tasks;
+    var {tasks, isDisplayForm, taskEditing, filter, keyword} = this.state; //tương đương: var tasks = this.state.tasks;
     if(filter){
         if(filter.name){
             tasks = tasks.filter((task)=>{
@@ -182,6 +189,13 @@ class App extends Component {
         })
     
     }
+
+    if(keyword){
+        tasks = tasks.filter((task)=>{
+            return task.name.toLowerCase().indexOf(keyword) !== -1;
+        });
+    }
+
     var elmTaskForm = isDisplayForm ? <TaskForm 
         onCloseForm={this.onCloseForm} 
         onSubmit={this.onSubmitData.bind(this)} 
@@ -209,7 +223,7 @@ class App extends Component {
                       Generate Data
                   </button> */}
                     {/* Search - Sort */}
-                    <Control />
+                    <Control onSearch={this.onSearch} />
 
                   {/* List */}
                   <div className="row mt-15">
