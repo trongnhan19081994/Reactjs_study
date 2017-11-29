@@ -9,7 +9,7 @@ class App extends Component {
     constructor(props){
         super(props);
         this.state = {
-            tasks:[],
+            tasks:[], // id, name, status
             isDisplayForm:false
         }
     }
@@ -71,14 +71,49 @@ class App extends Component {
     onSubmitData(data){
         var {tasks} = this.state;
         data.id=this.generateID();
-        data.name= data.name;
-        data.status= data.status;
+        // data.name= data.name;
+        // data.status= data.status;
         tasks.push(data);
         this.setState({
             tasks:tasks
         })
         localStorage.setItem('tasks', JSON.stringify(tasks));// JSON.stringify(tasks): Chuyển từ kiểu Object sang kiểu String
    
+    }
+
+    onUpdateStatus = (id) =>{
+        var {tasks} = this.state;
+        var index = this.findIndex(id);
+        if(index !== -1){
+            tasks[index].status = !tasks[index].status;
+            this.setState({
+                tasks:tasks
+            });
+            localStorage.setItem('tasks', JSON.stringify(tasks)); 
+        }
+    }
+
+    findIndex = (id) =>{
+        var {tasks} = this.state;
+        var result = -1;
+        tasks.forEach( (task, index) =>{
+            if(task.id===id){
+                result=index;
+            }
+        } );
+        return result;
+    }
+
+    onDeleteItems = (id) =>{
+        var {tasks} = this.state;
+        var index = this.findIndex(id);
+        if(index !== -1){
+            tasks.splice(index,1);
+            this.setState({
+                tasks:tasks
+            });
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+        }
     }
 
   render() {
@@ -112,7 +147,11 @@ class App extends Component {
                   {/* List */}
                   <div className="row mt-15">
                       <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                        <TaskList tasks={tasks}/>
+                        <TaskList 
+                            tasks={tasks} 
+                            onUpdateStatus = {this.onUpdateStatus} 
+                            onDeleteItems = {this.onDeleteItems}
+                        />
                       </div>
                   </div>
               </div>
