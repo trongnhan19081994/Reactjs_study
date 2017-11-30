@@ -3,6 +3,7 @@ import './App.css';
 import TaskForm from './components/TaskForm';
 import Control from './components/TaskControl';
 import TaskList from './components/TaskList';
+import {findIndex, filter} from 'lodash';
 
 class App extends Component {
 
@@ -16,7 +17,9 @@ class App extends Component {
                 name:'',
                 status:-1
             },
-            keyword:''
+            keyword:'',
+            sortBy:'name',
+            sortValue:1
         }
     }
 
@@ -110,7 +113,10 @@ class App extends Component {
 
     onUpdateStatus = (id) =>{
         var {tasks} = this.state;
-        var index = this.findIndex(id);
+        //var index = this.findIndex(id);
+        var index = findIndex(tasks, (task)=>{
+            return task.id === id;
+        })
         if(index !== -1){
             tasks[index].status = !tasks[index].status;
             this.setState({
@@ -170,14 +176,26 @@ class App extends Component {
        })
     }
 
+    onSort = (sortBy, sortValue) =>{
+        this.setState({
+            sortBy:sortBy,
+            sortValue:sortValue
+        })
+    }
+
   render() {
 
-    var {tasks, isDisplayForm, taskEditing, filter, keyword} = this.state; //tương đương: var tasks = this.state.tasks;
+    var {tasks, isDisplayForm, taskEditing, filter, keyword, sortBy, sortValue} = this.state; //tương đương: var tasks = this.state.tasks;
     if(filter){
         if(filter.name){
-            tasks = tasks.filter((task)=>{
-                return task.name.toLowerCase().indexOf(filter.name) !== -1;
-            });
+
+            tasks = filter(tasks, (task)=>{
+                return task.name.toLowerCase().indexOf(keyword.toLowerCase()) !== -1;
+            })
+            // tasks = tasks.filter((task)=>{
+            //     return task.name.toLowerCase().indexOf(keyword.toLowerCase()) !== -1;
+            // });
+
         }
    
         tasks = tasks.filter( (task)=>{
@@ -195,6 +213,30 @@ class App extends Component {
             return task.name.toLowerCase().indexOf(keyword) !== -1;
         });
     }
+
+    if(sortBy==='name'){
+        tasks.sort((a,b)=>{
+            if(a.name > b.name){
+                return sortValue;
+            } 
+            else if(a.name < b.name){
+                return -sortValue;
+            }
+            else return 0;      
+        })
+    } else {
+        tasks.sort((a,b)=>{
+            if(a.status > b.status){
+               
+                return -sortValue;
+            } 
+            else if(a.status < b.status){
+                return sortValue;
+            }
+            else return 0;      
+        })
+    }
+   
 
     var elmTaskForm = isDisplayForm ? <TaskForm 
         onCloseForm={this.onCloseForm} 
@@ -223,7 +265,12 @@ class App extends Component {
                       Generate Data
                   </button> */}
                     {/* Search - Sort */}
-                    <Control onSearch={this.onSearch} />
+                    <Control 
+                        onSearch={this.onSearch} 
+                        onSort = {this.onSort}
+                        sortBy = {sortBy}
+                        sortValue={sortValue}
+                    />
 
                   {/* List */}
                   <div className="row mt-15">
