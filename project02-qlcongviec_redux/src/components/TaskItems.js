@@ -11,11 +11,11 @@ class TaskItems extends Component {
     onDeleteItems = () =>{
         this.props.onDeleteTask(this.props.task.id);
         this.props.onCloseForm();
-        //tương đương: dispatch(actions.deleteTask(id));
     }
 
-    onUpdate = () =>{
-        this.props.onUpdate(this.props.task.id);
+    onEditTask = () =>{
+        this.props.onOpenForm();
+        this.props.onEditTask(this.props.task);
     }
   
     render() {
@@ -36,7 +36,7 @@ class TaskItems extends Component {
                 </span>
             </td>
             <td className="text-center">
-                <button onClick={this.onUpdate}  type="button" className="btn btn-warning">
+                <button onClick={this.onEditTask}  type="button" className="btn btn-warning">
                     <span className="fa fa-pencil mr-5"></span>Sửa
                 </button>
                 &nbsp;
@@ -52,7 +52,7 @@ class TaskItems extends Component {
 
 const mapStateToProps = state =>{
     return{
-
+        
     }
 }
 const mapDispatchToProps = (dispatch, props) =>{
@@ -65,6 +65,12 @@ const mapDispatchToProps = (dispatch, props) =>{
         },
         onCloseForm : () =>{
             dispatch(actions.closeForm());
+        },
+        onOpenForm : () =>{
+            dispatch(actions.openForm());
+        },
+        onEditTask: (task) =>{
+            dispatch(actions.editTask(task));
         }
     }
 }

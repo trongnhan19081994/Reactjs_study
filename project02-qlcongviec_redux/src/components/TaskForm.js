@@ -14,28 +14,26 @@ class TaskForm extends Component {
     }
 
     componentWillMount(){ // Thực thi trước khi hiện thị taskForm
-        if(this.props.task){
+        if(this.props.itemEditing && this.props.itemEditing.id !== null){
             this.setState({
-                id: this.props.task.id,
-                name: this.props.task.name,
-                status: this.props.task.status,
+                id: this.props.itemEditing.id,
+                name: this.props.itemEditing.name,
+                status: this.props.itemEditing.status,
             })
+        } else {
+            this.onClear();
         }
     }
 
     componentWillReceiveProps(nextProps){ // Hàm này thực hiện liên tục mỗi khi props thay đổi
-        if(nextProps && nextProps.task){
+        if(nextProps && nextProps.itemEditing){
             this.setState({
-                id: nextProps.task.id,
-                name: nextProps.task.name,
-                status: nextProps.task.status,
+                id: nextProps.itemEditing.id,
+                name: nextProps.itemEditing.name,
+                status: nextProps.itemEditing.status,
             })
-        } else if(!nextProps.task){ // Sửa thành thêm
-            this.setState({
-                id:'',
-                name:'',
-                status:false
-            })
+        } else{ // Sửa thành thêm
+            this.onClear();
         }
     }
 
@@ -57,7 +55,7 @@ class TaskForm extends Component {
 
     onSubmitForm = (event) =>{
         event.preventDefault();
-        this.props.onAddTask(this.state);
+        this.props.onSaveTask(this.state);
         //Cancel & Close Form
         this.onClear();
         this.onCloseFormClick();
@@ -67,14 +65,14 @@ class TaskForm extends Component {
         this.setState({
             name:'',
             status:false
-        })
+        });
         this.onCloseFormClick();
     }
 
   render() {
 
     var {id} = this.state;
-
+    if(!this.props.isDisplayForm) return null;
     return (
       
         <div className="panel panel-warning">
@@ -105,7 +103,7 @@ class TaskForm extends Component {
                     <br/>
                     <div className="text-center">
                         <button type="submit" className="btn btn-warning">Thêm</button>&nbsp;
-                        <button onClick={this.onClear} type="submit" className="btn btn-danger">Hủy Bỏ</button>
+                        <button onClick={this.onClear} type="button" className="btn btn-danger">Hủy Bỏ</button>
                     </div>
                 </form>
             </div>
@@ -117,14 +115,15 @@ class TaskForm extends Component {
 
 const mapStateToProps = state =>{
     return{
-
+        isDisplayForm: state.isDisplayForm,
+        itemEditing: state.itemEditing
     }
 };
 
 const mapDispatchToProps = (dispatch, props) => {
     return{
-        onAddTask : (task) => {
-            dispatch(actions.addTask(task));
+        onSaveTask : (task) => {
+            dispatch(actions.saveTask(task));
         },
         onCloseForm : () =>{
             dispatch(actions.closeForm());

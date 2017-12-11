@@ -28,13 +28,20 @@ var myReducer = ( state = initialState, action ) => {
     switch (action.type) {
         case types.LIST_ALL:
             return state;    
-        case types.ADD_TASK:
-            var newTask = {
-                id : generateID(),
+        case types.SAVE_TASK:
+            var task= {
+                id: action.task.id,
                 name: action.task.name,
-                stauts: action.task.status === 'true' ? true : false
-            } 
-           state.push(newTask);
+                status: action.task.status === 'true' ? true : false
+            };
+            if(!task.id){
+               task.id=generateID();
+               state.push(task);
+            } else {
+                index = findIndex(state, task.id);
+                state[index] = task;
+            }
+          
            localStorage.setItem('tasks', JSON.stringify(state));
            return [...state]; // Copy ra array mới trả về
         case types.UPDATE_STATUS_TASK:
