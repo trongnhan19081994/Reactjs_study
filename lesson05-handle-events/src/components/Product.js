@@ -40,8 +40,7 @@ class Product extends Component {
                   <a className="btn btn-primary" onClick={ this.onAddToCart } >Truyền theo kiểu contructor</a> <br/> <br/>
 
                   <a className="btn btn-primary" onClick={ this.onAddToCart2 } >Truyền theo kiểu arrow function</a> <br/> <br/>
-                  <
-                    a className="btn btn-primary" onClick={ () => this.onAddToCart3(this.props.name)} >Truyền có tham số</a> 
+                  <a className="btn btn-primary" onClick={ () => this.onAddToCart3(this.props.name)} >Truyền có tham số</a> 
                 </p>
               </div>
             </div>
