@@ -8,26 +8,6 @@ import * as actions from './actions/index';
 
 class App extends Component {
 
-    constructor(props){
-        super(props);
-        this.state = {
-            taskEditing:null,
-            sortBy:'name',
-            sortValue:1
-        }
-    }
-
-    componentWillMount(){
-       if(localStorage && localStorage.getItem('tasks')){
-           var tasks = JSON.parse(localStorage.getItem('tasks'));
-           this.setState({
-            tasks: tasks
-           })
-       }
-    }
-
-
- 
     onToggleForm = () =>{
         var {itemEditing} = this.props;
         if(itemEditing && itemEditing.id !==''){
@@ -43,94 +23,9 @@ class App extends Component {
        
     }
 
-    onShowForm = () =>{
-        this.setState({
-            isDisplayForm: true
-        });
-    }
-
-    onSubmitData(data){
-        var {tasks} = this.state;
-        if(data.id===''){
-            data.id=this.generateID();
-            // data.name= data.name;
-            // data.status= data.status;
-            tasks.push(data);
-        } else {
-            //Editing
-            var index = this.findIndex(data.id);
-            tasks[index] = data;
-        }
-       
-        this.setState({
-            tasks:tasks, 
-            taskEditing: null
-        })
-        localStorage.setItem('tasks', JSON.stringify(tasks));// JSON.stringify(tasks): Chuyển từ kiểu Object sang kiểu String
-   
-    }
-
-
-    findIndex = (id) =>{
-        var {tasks} = this.state;
-        var result = -1;
-        tasks.forEach( (task, index) =>{
-            if(task.id===id){
-                result=index;
-            }
-        } );
-        return result;
-    }
-
-
-    onSearch = (keyword) =>{
-       this.setState({
-           keyword: keyword
-       })
-    }
-
-    onSort = (sortBy, sortValue) =>{
-        this.setState({
-            sortBy:sortBy,
-            sortValue:sortValue
-        })
-    }
-
   render() {
 
-    var { sortBy, sortValue} = this.state; //tương đương: var tasks = this.state.tasks;
-    
     var { isDisplayForm } = this.props;
-    
-
-    // if(sortBy==='name'){
-    //     tasks.sort((a,b)=>{
-    //         if(a.name > b.name){
-    //             return sortValue;
-    //         } 
-    //         else if(a.name < b.name){
-    //             return -sortValue;
-    //         }
-    //         else return 0;      
-    //     })
-    // } else {
-    //     tasks.sort((a,b)=>{
-    //         if(a.status > b.status){
-               
-    //             return -sortValue;
-    //         } 
-    //         else if(a.status < b.status){
-    //             return sortValue;
-    //         }
-    //         else return 0;      
-    //     })
-    // }
-   
-
-    // var elmTaskForm = isDisplayForm ? <TaskForm 
-    //     onSubmit={this.onSubmitData.bind(this)} 
-    //     task={taskEditing}
-    // />: '';
 
     return (
       
@@ -149,12 +44,7 @@ class App extends Component {
                       <span className="fa fa-plus mr-5"></span>Thêm Công Việc
                   </button> &nbsp;&nbsp;
                     {/* Search - Sort */}
-                    <Control 
-                        onSearch={this.onSearch} 
-                        onSort = {this.onSort}
-                        sortBy = {sortBy}
-                        sortValue={sortValue}
-                    />
+                    <Control />
 
                   {/* List */}
                   <div className="row mt-15">
